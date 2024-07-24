@@ -1,0 +1,8 @@
+/* src/components/Albums/Albums.css */
+.album-card {
+    transition: transform 0.2s;
+  }
+  
+  .album-card:hover {
+    transform: scale(1.05);
+  }

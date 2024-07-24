@@ -1,0 +1,18 @@
+/* src/components/Todos/Todos.css */
+.todo-card {
+    transition: transform 0.2s;
+  }
+  
+  .todo-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .todo-card .ant-card-meta-title {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  .todo-card .ant-card-meta-description {
+    font-size: 1em;
+    color: #888;
+  }

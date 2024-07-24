@@ -1,0 +1,8 @@
+/* src/components/Comments/Comments.css */
+.comment-card {
+    transition: transform 0.2s;
+  }
+  
+  .comment-card:hover {
+    transform: scale(1.05);
+  }

@@ -1,0 +1,8 @@
+/* src/components/Posts/Posts.css */
+.post-card {
+    transition: transform 0.2s;
+  }
+  
+  .post-card:hover {
+    transform: scale(1.05);
+  }
