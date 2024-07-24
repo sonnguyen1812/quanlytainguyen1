@@ -1,57 +1,82 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { Card, Spin, Button, List } from 'antd';
+import { Card, Spin, Button, Input } from 'antd';
+import { ResourceContext } from '../../context/ResourceContext';
 
 const AlbumDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { resources, fetchResources, updateResource, deleteResource } = useContext(ResourceContext);
   const [album, setAlbum] = useState(null);
-  const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    title: ''
+  });
 
   useEffect(() => {
     if (id) {
-      axios.get(`https://jsonplaceholder.typicode.com/albums/${id}`)
-        .then(response => {
-          setAlbum(response.data);
-          return axios.get(`https://jsonplaceholder.typicode.com/albums/${id}/photos`);
-        })
-        .then(response => {
-          setPhotos(response.data);
+      const fetchedAlbum = resources.albums.find(album => album.id === parseInt(id));
+      if (fetchedAlbum) {
+        setAlbum(fetchedAlbum);
+        setFormData({
+          title: fetchedAlbum.title
+        });
+        setLoading(false);
+      } else {
+        fetchResources('albums').then(() => {
+          const newFetchedAlbum = resources.albums.find(album => album.id === parseInt(id));
+          if (newFetchedAlbum) {
+            setAlbum(newFetchedAlbum);
+            setFormData({
+              title: newFetchedAlbum.title
+            });
+          }
           setLoading(false);
-        })
-        .catch(error => {
-          console.error('Error fetching album or photos:', error);
+        }).catch(error => {
+          console.error('Error fetching album:', error);
           setLoading(false);
         });
+      }
     } else {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, resources.albums, fetchResources]);
+
+  const handleUpdate = () => {
+    updateResource('albums', id, formData).then(() => {
+      setEditing(false);
+    }).catch(error => {
+      console.error('Error updating album:', error);
+    });
+  };
+
+  const handleDelete = () => {
+    deleteResource('albums', id).then(() => {
+      navigate('/albums');
+    }).catch(error => {
+      console.error('Error deleting album:', error);
+    });
+  };
 
   if (loading) {
     return <Spin />;
   }
 
-  if (!album) {
-    return <div>Error: Album not found</div>;
-  }
-
   return (
     <Card title={album.title}>
-      <List
-        grid={{ gutter: 16, column: 4 }}
-        dataSource={photos}
-        renderItem={photo => (
-          <List.Item>
-            <Card hoverable cover={<img alt={photo.title} src={photo.thumbnailUrl} />}>
-              <Card.Meta title={photo.title} />
-            </Card>
-          </List.Item>
-        )}
-      />
-      <Button type="primary" onClick={() => navigate('/albums')}>Back to Albums</Button>
+      {editing ? (
+        <>
+          <Input value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
+          <Button type="primary" onClick={handleUpdate}>Save</Button>
+        </>
+      ) : (
+        <>
+          <p>{album.title}</p>
+          <Button type="primary" onClick={() => setEditing(true)}>Edit</Button>
+        </>
+      )}
+      <Button type="danger" onClick={handleDelete}>Delete</Button>
     </Card>
   );
 };

@@ -1,65 +1,65 @@
-// src/components/Users/UserDetail.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Card, Spin, Button, Input } from 'antd';
+import { ResourceContext } from '../../context/ResourceContext';
 
 const UserDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { resources, fetchResources, updateResource, deleteResource } = useContext(ResourceContext);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    username: '',
-    email: '',
-    address: '',
-    phone: '',
-    website: '',
-    company: ''
+    email: ''
   });
 
   useEffect(() => {
-    axios.get(`https://jsonplaceholder.typicode.com/users/${id}`)
-      .then(response => {
-        setUser(response.data);
+    if (id) {
+      const fetchedUser = resources.users.find(user => user.id === parseInt(id));
+      if (fetchedUser) {
+        setUser(fetchedUser);
         setFormData({
-          name: response.data.name,
-          username: response.data.username,
-          email: response.data.email,
-          address: `${response.data.address.street}, ${response.data.address.city}`,
-          phone: response.data.phone,
-          website: response.data.website,
-          company: response.data.company.name
+          name: fetchedUser.name,
+          email: fetchedUser.email
         });
         setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching user:', error);
-        setLoading(false);
-      });
-  }, [id]);
+      } else {
+        fetchResources('users').then(() => {
+          const newFetchedUser = resources.users.find(user => user.id === parseInt(id));
+          if (newFetchedUser) {
+            setUser(newFetchedUser);
+            setFormData({
+              name: newFetchedUser.name,
+              email: newFetchedUser.email
+            });
+          }
+          setLoading(false);
+        }).catch(error => {
+          console.error('Error fetching user:', error);
+          setLoading(false);
+        });
+      }
+    } else {
+      setLoading(false);
+    }
+  }, [id, resources.users, fetchResources]);
 
   const handleUpdate = () => {
-    axios.put(`https://jsonplaceholder.typicode.com/users/${id}`, formData)
-      .then(response => {
-        setUser(response.data);
-        setEditing(false);
-      })
-      .catch(error => {
-        console.error('Error updating user:', error);
-      });
+    updateResource('users', id, formData).then(() => {
+      setEditing(false);
+    }).catch(error => {
+      console.error('Error updating user:', error);
+    });
   };
 
   const handleDelete = () => {
-    axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`)
-      .then(() => {
-        navigate('/users');
-      })
-      .catch(error => {
-        console.error('Error deleting user:', error);
-      });
+    deleteResource('users', id).then(() => {
+      navigate('/users');
+    }).catch(error => {
+      console.error('Error deleting user:', error);
+    });
   };
 
   if (loading) {
@@ -71,22 +71,12 @@ const UserDetail = () => {
       {editing ? (
         <>
           <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
-          <Input value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} />
           <Input value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
-          <Input value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} />
-          <Input value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} />
-          <Input value={formData.website} onChange={e => setFormData({ ...formData, website: e.target.value })} />
-          <Input value={formData.company} onChange={e => setFormData({ ...formData, company: e.target.value })} />
           <Button type="primary" onClick={handleUpdate}>Save</Button>
         </>
       ) : (
         <>
-          <p>Username: {user.username}</p>
-          <p>Email: {user.email}</p>
-          <p>Address: {user.address.street}, {user.address.city}</p>
-          <p>Phone: {user.phone}</p>
-          <p>Website: {user.website}</p>
-          <p>Company: {user.company.name}</p>
+          <p>{user.email}</p>
           <Button type="primary" onClick={() => setEditing(true)}>Edit</Button>
         </>
       )}

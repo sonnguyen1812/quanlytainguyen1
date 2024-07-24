@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Card, Spin, Button, Input } from 'antd';
+import { ResourceContext } from '../../context/ResourceContext';
 
-const PostDetail = ({ fetchPosts }) => {
+const PostDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { resources, fetchResources, updateResource, deleteResource } = useContext(ResourceContext);
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -16,58 +17,55 @@ const PostDetail = ({ fetchPosts }) => {
 
   useEffect(() => {
     if (id) {
-      axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`)
-        .then(response => {
-          setPost(response.data);
-          setFormData({
-            title: response.data.title,
-            body: response.data.body
-          });
+      const fetchedPost = resources.posts.find(post => post.id === parseInt(id));
+      if (fetchedPost) {
+        setPost(fetchedPost);
+        setFormData({
+          title: fetchedPost.title,
+          body: fetchedPost.body
+        });
+        setLoading(false);
+      } else {
+        fetchResources('posts').then(() => {
+          const newFetchedPost = resources.posts.find(post => post.id === parseInt(id));
+          if (newFetchedPost) {
+            setPost(newFetchedPost);
+            setFormData({
+              title: newFetchedPost.title,
+              body: newFetchedPost.body
+            });
+          }
           setLoading(false);
-        })
-        .catch(error => {
+        }).catch(error => {
           console.error('Error fetching post:', error);
           setLoading(false);
         });
+      }
     } else {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, resources.posts, fetchResources]);
 
   const handleSave = () => {
     if (id) {
-      axios.put(`https://jsonplaceholder.typicode.com/posts/${id}`, formData)
-        .then(response => {
-          setPost(response.data);
-          setEditing(false);
-          fetchPosts(); // Cập nhật danh sách sau khi chỉnh sửa
-          navigate('/posts');
-        })
-        .catch(error => {
-          console.error('Error updating post:', error);
-        });
+      updateResource('posts', id, formData).then(() => {
+        setEditing(false);
+        navigate('/posts');
+      }).catch(error => {
+        console.error('Error updating post:', error);
+      });
     } else {
-      axios.post(`https://jsonplaceholder.typicode.com/posts`, formData)
-        .then(response => {
-          fetchPosts(); // Cập nhật danh sách sau khi thêm mới
-          navigate(`/posts/${response.data.id}`);
-        })
-        .catch(error => {
-          console.error('Error creating post:', error);
-        });
+      // Logic for creating a new post
     }
   };
 
   const handleDelete = () => {
     if (id) {
-      axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`)
-        .then(() => {
-          fetchPosts(); // Cập nhật danh sách sau khi xóa
-          navigate('/posts');
-        })
-        .catch(error => {
-          console.error('Error deleting post:', error);
-        });
+      deleteResource('posts', id).then(() => {
+        navigate('/posts');
+      }).catch(error => {
+        console.error('Error deleting post:', error);
+      });
     }
   };
 

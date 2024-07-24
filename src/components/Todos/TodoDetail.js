@@ -1,12 +1,12 @@
-// src/components/Todos/TodoDetail.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Card, Spin, Button, Input, Checkbox } from 'antd';
+import { ResourceContext } from '../../context/ResourceContext';
 
 const TodoDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { resources, fetchResources, updateResource, deleteResource } = useContext(ResourceContext);
   const [todo, setTodo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -16,40 +16,50 @@ const TodoDetail = () => {
   });
 
   useEffect(() => {
-    axios.get(`https://jsonplaceholder.typicode.com/todos/${id}`)
-      .then(response => {
-        setTodo(response.data);
+    if (id) {
+      const fetchedTodo = resources.todos.find(todo => todo.id === parseInt(id));
+      if (fetchedTodo) {
+        setTodo(fetchedTodo);
         setFormData({
-          title: response.data.title,
-          completed: response.data.completed
+          title: fetchedTodo.title,
+          completed: fetchedTodo.completed
         });
         setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching todo:', error);
-        setLoading(false);
-      });
-  }, [id]);
+      } else {
+        fetchResources('todos').then(() => {
+          const newFetchedTodo = resources.todos.find(todo => todo.id === parseInt(id));
+          if (newFetchedTodo) {
+            setTodo(newFetchedTodo);
+            setFormData({
+              title: newFetchedTodo.title,
+              completed: newFetchedTodo.completed
+            });
+          }
+          setLoading(false);
+        }).catch(error => {
+          console.error('Error fetching todo:', error);
+          setLoading(false);
+        });
+      }
+    } else {
+      setLoading(false);
+    }
+  }, [id, resources.todos, fetchResources]);
 
   const handleUpdate = () => {
-    axios.put(`https://jsonplaceholder.typicode.com/todos/${id}`, formData)
-      .then(response => {
-        setTodo(response.data);
-        setEditing(false);
-      })
-      .catch(error => {
-        console.error('Error updating todo:', error);
-      });
+    updateResource('todos', id, formData).then(() => {
+      setEditing(false);
+    }).catch(error => {
+      console.error('Error updating todo:', error);
+    });
   };
 
   const handleDelete = () => {
-    axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`)
-      .then(() => {
-        navigate('/todos');
-      })
-      .catch(error => {
-        console.error('Error deleting todo:', error);
-      });
+    deleteResource('todos', id).then(() => {
+      navigate('/todos');
+    }).catch(error => {
+      console.error('Error deleting todo:', error);
+    });
   };
 
   if (loading) {

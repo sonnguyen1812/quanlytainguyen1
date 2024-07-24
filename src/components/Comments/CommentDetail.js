@@ -1,57 +1,65 @@
-// src/components/Comments/CommentDetail.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Card, Spin, Button, Input } from 'antd';
+import { ResourceContext } from '../../context/ResourceContext';
 
 const CommentDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { resources, fetchResources, updateResource, deleteResource } = useContext(ResourceContext);
   const [comment, setComment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    body: '',
-    email: ''
+    body: ''
   });
 
   useEffect(() => {
-    axios.get(`https://jsonplaceholder.typicode.com/comments/${id}`)
-      .then(response => {
-        setComment(response.data);
+    if (id) {
+      const fetchedComment = resources.comments.find(comment => comment.id === parseInt(id));
+      if (fetchedComment) {
+        setComment(fetchedComment);
         setFormData({
-          name: response.data.name,
-          body: response.data.body,
-          email: response.data.email
+          name: fetchedComment.name,
+          body: fetchedComment.body
         });
         setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching comment:', error);
-        setLoading(false);
-      });
-  }, [id]);
+      } else {
+        fetchResources('comments').then(() => {
+          const newFetchedComment = resources.comments.find(comment => comment.id === parseInt(id));
+          if (newFetchedComment) {
+            setComment(newFetchedComment);
+            setFormData({
+              name: newFetchedComment.name,
+              body: newFetchedComment.body
+            });
+          }
+          setLoading(false);
+        }).catch(error => {
+          console.error('Error fetching comment:', error);
+          setLoading(false);
+        });
+      }
+    } else {
+      setLoading(false);
+    }
+  }, [id, resources.comments, fetchResources]);
 
   const handleUpdate = () => {
-    axios.put(`https://jsonplaceholder.typicode.com/comments/${id}`, formData)
-      .then(response => {
-        setComment(response.data);
-        setEditing(false);
-      })
-      .catch(error => {
-        console.error('Error updating comment:', error);
-      });
+    updateResource('comments', id, formData).then(() => {
+      setEditing(false);
+    }).catch(error => {
+      console.error('Error updating comment:', error);
+    });
   };
 
   const handleDelete = () => {
-    axios.delete(`https://jsonplaceholder.typicode.com/comments/${id}`)
-      .then(() => {
-        navigate('/comments');
-      })
-      .catch(error => {
-        console.error('Error deleting comment:', error);
-      });
+    deleteResource('comments', id).then(() => {
+      navigate('/comments');
+    }).catch(error => {
+      console.error('Error deleting comment:', error);
+    });
   };
 
   if (loading) {
@@ -64,13 +72,11 @@ const CommentDetail = () => {
         <>
           <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
           <Input.TextArea value={formData.body} onChange={e => setFormData({ ...formData, body: e.target.value })} />
-          <Input value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
           <Button type="primary" onClick={handleUpdate}>Save</Button>
         </>
       ) : (
         <>
           <p>{comment.body}</p>
-          <p>Email: {comment.email}</p>
           <Button type="primary" onClick={() => setEditing(true)}>Edit</Button>
         </>
       )}
