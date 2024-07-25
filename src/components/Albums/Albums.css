@@ -1,8 +1,8 @@
-/* src/components/Albums/Albums.css */
-.album-card {
-    transition: transform 0.2s;
-  }
-  
-  .album-card:hover {
-    transform: scale(1.05);
-  }
+.albums .ant-card {
+  margin-bottom: 16px;
+}
+
+.ant-card-cover img {
+  height: 150px;
+  object-fit: cover;
+}
