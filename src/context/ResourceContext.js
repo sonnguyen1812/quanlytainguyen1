@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import useFetch from '../hooks/useFetch';
 
-export const ResourceContext = createContext();
+export const ResourceContext = createContext({});
 
 export const ResourceProvider = ({ children }) => {
   const [data, setData] = useState({
