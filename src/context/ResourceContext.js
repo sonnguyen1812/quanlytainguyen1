@@ -6,7 +6,7 @@ import useFetch from '../hooks/useFetch';
 
 export const ResourceContext = createContext({});
 
-// Define action types
+
 const actionTypes = {
   SET_DATA: 'SET_DATA',
   CREATE_ITEM: 'CREATE_ITEM',
@@ -14,7 +14,7 @@ const actionTypes = {
   DELETE_ITEM: 'DELETE_ITEM'
 };
 
-// Define reducer
+
 const dataReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.SET_DATA:
