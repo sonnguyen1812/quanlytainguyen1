@@ -1,11 +1,18 @@
 import { useCallback } from 'react';
 
 const useFetch = () => {
+  const handleResponse = async (response) => {
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+    }
+    return response.json();
+  };
+
   const fetchData = useCallback(async (url) => {
     try {
       const response = await fetch(url);
-      const data = await response.json();
-      return data;
+      return await handleResponse(response);
     } catch (error) {
       console.error('Error fetching data:', error);
       return [];
@@ -21,8 +28,7 @@ const useFetch = () => {
         },
         body: JSON.stringify(newData)
       });
-      const data = await response.json();
-      return data;
+      return await handleResponse(response);
     } catch (error) {
       console.error('Error creating data:', error);
       return null;
@@ -38,8 +44,7 @@ const useFetch = () => {
         },
         body: JSON.stringify(updatedData)
       });
-      const data = await response.json();
-      return data;
+      return await handleResponse(response);
     } catch (error) {
       console.error('Error updating data:', error);
       return null;
@@ -48,9 +53,13 @@ const useFetch = () => {
 
   const deleteData = useCallback(async (url) => {
     try {
-      await fetch(url, {
+      const response = await fetch(url, {
         method: 'DELETE'
       });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
       return true;
     } catch (error) {
       console.error('Error deleting data:', error);

@@ -1,12 +1,55 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useReducer, useEffect } from 'react';
+import useCreateItem from '../hooks/useCreateItem';
+import useUpdateItem from '../hooks/useUpdateItem';
+import useDeleteItem from '../hooks/useDeleteItem';
 import useFetch from '../hooks/useFetch';
 
 export const ResourceContext = createContext({});
 
-export const ResourceProvider = ({ children }) => {
-  const [data, setData] = useState({});
+// Define action types
+const actionTypes = {
+  SET_DATA: 'SET_DATA',
+  CREATE_ITEM: 'CREATE_ITEM',
+  UPDATE_ITEM: 'UPDATE_ITEM',
+  DELETE_ITEM: 'DELETE_ITEM'
+};
 
-  const { fetchData, createData, updateData, deleteData } = useFetch();
+// Define reducer
+const dataReducer = (state, action) => {
+  switch (action.type) {
+    case actionTypes.SET_DATA:
+      return {
+        ...state,
+        ...action.payload
+      };
+    case actionTypes.CREATE_ITEM:
+      return {
+        ...state,
+        [action.payload.type]: [...state[action.payload.type], action.payload.item]
+      };
+    case actionTypes.UPDATE_ITEM:
+      return {
+        ...state,
+        [action.payload.type]: state[action.payload.type].map(item =>
+          item.id === action.payload.item.id ? action.payload.item : item
+        )
+      };
+    case actionTypes.DELETE_ITEM:
+      return {
+        ...state,
+        [action.payload.type]: state[action.payload.type].filter(item => item.id !== action.payload.id)
+      };
+    default:
+      return state;
+  }
+};
+
+export const ResourceProvider = ({ children }) => {
+  const [data, dispatch] = useReducer(dataReducer, {});
+  const { fetchData } = useFetch();
+  const { createItem } = useCreateItem();
+  const { updateItem } = useUpdateItem();
+  const { deleteItem } = useDeleteItem();
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -17,49 +60,47 @@ export const ResourceProvider = ({ children }) => {
       const photos = await fetchData('https://jsonplaceholder.typicode.com/photos');
       const todos = await fetchData('https://jsonplaceholder.typicode.com/todos');
       
-      setData({
-        users,
-        posts,
-        comments,
-        albums,
-        photos,
-        todos
+      dispatch({
+        type: actionTypes.SET_DATA,
+        payload: { users, posts, comments, albums, photos, todos }
       });
     };
 
     fetchInitialData();
   }, [fetchData]);
 
-  const updateContextData = (type, updatedData) => {
-    setData(prevData => ({
-      ...prevData,
-      [type]: updatedData
-    }));
-  };
-
-  const createItem = async (type, newItem) => {
-    const createdItem = await createData(`https://jsonplaceholder.typicode.com/${type}`, newItem);
+  const createItemHandler = async (type, newItem) => {
+    const createdItem = await createItem(type, newItem);
     if (createdItem) {
-      updateContextData(type, [...data[type], createdItem]);
+      dispatch({
+        type: actionTypes.CREATE_ITEM,
+        payload: { type, item: createdItem }
+      });
     }
   };
 
-  const updateItem = async (type, updatedItem) => {
-    const item = await updateData(`https://jsonplaceholder.typicode.com/${type}/${updatedItem.id}`, updatedItem);
+  const updateItemHandler = async (type, updatedItem) => {
+    const item = await updateItem(type, updatedItem);
     if (item) {
-      updateContextData(type, data[type].map(i => (i.id === item.id ? item : i)));
+      dispatch({
+        type: actionTypes.UPDATE_ITEM,
+        payload: { type, item }
+      });
     }
   };
 
-  const deleteItem = async (type, id) => {
-    const success = await deleteData(`https://jsonplaceholder.typicode.com/${type}/${id}`);
+  const deleteItemHandler = async (type, id) => {
+    const success = await deleteItem(type, id);
     if (success) {
-      updateContextData(type, data[type].filter(i => i.id !== id));
+      dispatch({
+        type: actionTypes.DELETE_ITEM,
+        payload: { type, id }
+      });
     }
   };
 
   return (
-    <ResourceContext.Provider value={{ data, createItem, updateItem, deleteItem }}>
+    <ResourceContext.Provider value={{ data, createItem: createItemHandler, updateItem: updateItemHandler, deleteItem: deleteItemHandler }}>
       {children}
     </ResourceContext.Provider>
   );
