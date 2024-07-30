@@ -4,14 +4,7 @@ import useFetch from '../hooks/useFetch';
 export const ResourceContext = createContext({});
 
 export const ResourceProvider = ({ children }) => {
-  const [data, setData] = useState({
-    users: [],
-    posts: [],
-    comments: [],
-    albums: [],
-    photos: [],
-    todos: []
-  });
+  const [data, setData] = useState({});
 
   const { fetchData, createData, updateData, deleteData } = useFetch();
 
