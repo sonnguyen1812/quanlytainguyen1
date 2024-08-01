@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useEffect } from 'react';
+import React, { createContext, useReducer, useEffect,  useRef } from 'react';
 import useCreateItem from '../hooks/useCreateItem';
 import useUpdateItem from '../hooks/useUpdateItem';
 import useDeleteItem from '../hooks/useDeleteItem';
@@ -6,14 +6,12 @@ import useFetch from '../hooks/useFetch';
 
 export const ResourceContext = createContext({});
 
-
 const actionTypes = {
   SET_DATA: 'SET_DATA',
   CREATE_ITEM: 'CREATE_ITEM',
   UPDATE_ITEM: 'UPDATE_ITEM',
   DELETE_ITEM: 'DELETE_ITEM'
 };
-
 
 const dataReducer = (state, action) => {
   switch (action.type) {
@@ -46,24 +44,31 @@ const dataReducer = (state, action) => {
 
 export const ResourceProvider = ({ children }) => {
   const [data, dispatch] = useReducer(dataReducer, {});
+  
   const { fetchData } = useFetch();
   const { createItem } = useCreateItem();
   const { updateItem } = useUpdateItem();
   const { deleteItem } = useDeleteItem();
+  const isFetchingRef = useRef(false);
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      const users = await fetchData('https://jsonplaceholder.typicode.com/users');
-      const posts = await fetchData('https://jsonplaceholder.typicode.com/posts');
-      const comments = await fetchData('https://jsonplaceholder.typicode.com/comments');
-      const albums = await fetchData('https://jsonplaceholder.typicode.com/albums');
-      const photos = await fetchData('https://jsonplaceholder.typicode.com/photos');
-      const todos = await fetchData('https://jsonplaceholder.typicode.com/todos');
-      
-      dispatch({
-        type: actionTypes.SET_DATA,
-        payload: { users, posts, comments, albums, photos, todos }
-      });
+      if (!isFetchingRef.current) {
+        isFetchingRef.current = true;
+        const users = await fetchData('https://jsonplaceholder.typicode.com/users');
+        const posts = await fetchData('https://jsonplaceholder.typicode.com/posts');
+        const comments = await fetchData('https://jsonplaceholder.typicode.com/comments');
+        const albums = await fetchData('https://jsonplaceholder.typicode.com/albums');
+        const photos = await fetchData('https://jsonplaceholder.typicode.com/photos');
+        const todos = await fetchData('https://jsonplaceholder.typicode.com/todos');
+        
+        dispatch({
+          type: actionTypes.SET_DATA,
+          payload: { users, posts, comments, albums, photos, todos }
+        });
+
+        
+      }
     };
 
     fetchInitialData();
