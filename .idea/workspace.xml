@@ -5,23 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="13322142-d27a-43da-a8c5-cdc6ed6f1a66" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Albums/Albums.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Albums/Albums.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Posts/Posts.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Posts/Posts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Todos/Todos.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Todos/Todos.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Users/Users.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Users/Users.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/context/ResourceContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/ResourceContext.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useCreateItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useCreateItem.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useDeleteItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useDeleteItem.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useFetch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useFetch.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useUpdateItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useUpdateItem.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +58,7 @@
     "node.js.selected.package.stylelint": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "npm.start.executor": "Run",
+    "npm.start.executor": "Debug",
     "settings.editor.selected.configurable": "http.proxy",
     "ts.external.directory.path": "/snap/webstorm/387/plugins/javascript-plugin/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
@@ -138,7 +123,7 @@
       <workItem from="1722999594632" duration="1711000" />
       <workItem from="1723001896717" duration="42000" />
       <workItem from="1723002027302" duration="833000" />
-      <workItem from="1723002868981" duration="9286000" />
+      <workItem from="1723002868981" duration="10468000" />
     </task>
     <servers />
   </component>
