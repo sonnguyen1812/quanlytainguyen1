@@ -12,20 +12,17 @@ const Users = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const handleCreate = () => {
-        console.log('Creating user:', newUser);
         createItem('users', newUser);
         setNewUser({ name: '' });
     };
 
     const handleUpdate = () => {
-        console.log('Updating user:', editUser);
         updateItem('users', editUser);
         setEditUser(null);
         setIsModalVisible(false);
     };
 
     const handleDelete = (id) => {
-        console.log('Deleting user with id:', id);
         deleteItem('users', id);
     };
 
