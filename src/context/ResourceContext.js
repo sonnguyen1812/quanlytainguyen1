@@ -1,11 +1,9 @@
-import React, { createContext, useReducer, useEffect, useRef } from 'react';
-import useCreateItem from '../hooks/useCreateItem';
-import useUpdateItem from '../hooks/useUpdateItem';
-import useDeleteItem from '../hooks/useDeleteItem';
-import useFetch from '../hooks/useFetch';
+import React, { createContext, useReducer, useContext } from 'react';
 
+// Create the context
 export const ResourceContext = createContext({});
 
+// Action types
 const actionTypes = {
   SET_DATA: 'SET_DATA',
   CREATE_ITEM: 'CREATE_ITEM',
@@ -13,23 +11,18 @@ const actionTypes = {
   DELETE_ITEM: 'DELETE_ITEM'
 };
 
+// Reducer function
 const dataReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.SET_DATA:
-      return {
-        ...state,
-        ...action.payload
-      };
+      return { ...state, ...action.payload };
     case actionTypes.CREATE_ITEM:
-      return {
-        ...state,
-        [action.payload.type]: [...state[action.payload.type], action.payload.item]
-      };
+      return { ...state, [action.payload.type]: [...state[action.payload.type], action.payload.item] };
     case actionTypes.UPDATE_ITEM:
       return {
         ...state,
         [action.payload.type]: state[action.payload.type].map(item =>
-          item.id === action.payload.item.id ? action.payload.item : item
+            item.id === action.payload.item.id ? action.payload.item : item
         )
       };
     case actionTypes.DELETE_ITEM:
@@ -42,68 +35,29 @@ const dataReducer = (state, action) => {
   }
 };
 
-export const ResourceProvider = ({ children }) => {
-  const [data, dispatch] = useReducer(dataReducer, {});
-  const { fetchData } = useFetch();
-  const { createItem } = useCreateItem();
-  const { updateItem } = useUpdateItem();
-  const { deleteItem } = useDeleteItem();
-  const isFetchingRef = useRef(false);
+// Provider component
+export const ResourceProvider = ({ children, initialData }) => {
+  const [data, dispatch] = useReducer(dataReducer, initialData);
 
-  const fetchDataAndDispatch = async () => {
-    const users = await fetchData('https://jsonplaceholder.typicode.com/users');
-    const posts = await fetchData('https://jsonplaceholder.typicode.com/posts');
-    const comments = await fetchData('https://jsonplaceholder.typicode.com/comments');
-    const albums = await fetchData('https://jsonplaceholder.typicode.com/albums');
-    const photos = await fetchData('https://jsonplaceholder.typicode.com/photos');
-    const todos = await fetchData('https://jsonplaceholder.typicode.com/todos');
-
-    if (!isFetchingRef.current) {
-      isFetchingRef.current = true;
-      dispatch({
-        type: actionTypes.SET_DATA,
-        payload: { users, posts, comments, albums, photos, todos }
-      });
-    }
+  // CRUD functions
+  const createItem = (type, item) => {
+    dispatch({ type: actionTypes.CREATE_ITEM, payload: { type, item } });
   };
 
-  useEffect(() => {
-    fetchDataAndDispatch();
-  }, [fetchData]);
-
-  const createItemHandler = async (type, newItem) => {
-    const createdItem = await createItem(type, newItem);
-    if (createdItem) {
-      dispatch({
-        type: actionTypes.CREATE_ITEM,
-        payload: { type, item: createdItem }
-      });
-    }
+  const updateItem = (type, item) => {
+    dispatch({ type: actionTypes.UPDATE_ITEM, payload: { type, item } });
   };
 
-  const updateItemHandler = async (type, updatedItem) => {
-    const item = await updateItem(type, updatedItem);
-    if (item) {
-      dispatch({
-        type: actionTypes.UPDATE_ITEM,
-        payload: { type, item }
-      });
-    }
-  };
-
-  const deleteItemHandler = async (type, id) => {
-    const success = await deleteItem(type, id);
-    if (success) {
-      dispatch({
-        type: actionTypes.DELETE_ITEM,
-        payload: { type, id }
-      });
-    }
+  const deleteItem = (type, id) => {
+    dispatch({ type: actionTypes.DELETE_ITEM, payload: { type, id } });
   };
 
   return (
-    <ResourceContext.Provider value={{ data, createItem: createItemHandler, updateItem: updateItemHandler, deleteItem: deleteItemHandler }}>
-      {children}
-    </ResourceContext.Provider>
+      <ResourceContext.Provider value={{ data, createItem, updateItem, deleteItem }}>
+        {children}
+      </ResourceContext.Provider>
   );
 };
+
+// Custom hook for accessing the context
+export const useResource = () => useContext(ResourceContext);

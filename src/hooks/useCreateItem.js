@@ -1,9 +1,6 @@
-
-import useFetch from "./useFetch";
+import { createData } from "./useFetch";
 
 const useCreateItem = () => {
-  const { createData } = useFetch();
-
   const createItem = async (type, newItem) => {
     return await createData(`https://jsonplaceholder.typicode.com/${type}`, newItem);
   };

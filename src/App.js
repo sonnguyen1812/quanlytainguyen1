@@ -2,7 +2,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { ResourceProvider } from "./context/ResourceContext";
 import Posts from "./components/Posts/Posts";
 
 import Albums from "./components/Albums/Albums";
@@ -22,7 +21,6 @@ const menuItems = [
 
 const App = () => {
     return (
-        <ResourceProvider>
             <Router>
                 <Layout className="layout">
                     <Header>
@@ -49,7 +47,6 @@ const App = () => {
                     </Footer>
                 </Layout>
             </Router>
-        </ResourceProvider>
     );
 };
 

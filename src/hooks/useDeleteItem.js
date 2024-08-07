@@ -1,8 +1,6 @@
-import useFetch from "./useFetch";
+import { deleteData } from "./useFetch";
 
 const useDeleteItem = () => {
-  const { deleteData } = useFetch();
-
   const deleteItem = async (type, id) => {
     return await deleteData(`https://jsonplaceholder.typicode.com/${type}/${id}`);
   };

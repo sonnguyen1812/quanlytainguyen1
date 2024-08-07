@@ -47,7 +47,7 @@ const Albums = () => {
         setSelectedAlbum(null);
     };
 
-    if (!photos) {
+    if (!albums || !photos) {
         return <div>Loading...</div>;
     }
 
@@ -61,31 +61,31 @@ const Albums = () => {
             <List
                 grid={{ gutter: 16, column: 1 }}
                 dataSource={albums}
-                renderItem={(album) => (
+                renderItem={album => (
                     <List.Item>
                         <Card
                             title={album.title}
                             actions={[
-                                <Button
-                                    type="primary"
-                                    onClick={() => showModal(album)}
-                                >
-                                    Edit
-                                </Button>,
-                                <Button
-                                    type="danger"
-                                    onClick={() => handleDelete(album.id)}
-                                >
-                                    Delete
-                                </Button>,
-                                <Button
-                                    type="default"
-                                    onClick={() => showPhotosModal(album)}
-                                >
-                                    View Photos
-                                </Button>,
+                                <Button type="primary" onClick={() => showModal(album)}>Edit</Button>,
+                                <Button type="danger" onClick={() => handleDelete(album.id)}>Delete</Button>,
+                                <Button onClick={() => showPhotosModal(album)}>View Photos</Button>
                             ]}
-                        />
+                        >
+                            <List
+                                className="photo-list"
+                                header={`${albumPhotos(album.id).length} photos`}
+                                itemLayout="horizontal"
+                                dataSource={albumPhotos(album.id)}
+                                renderItem={photo => (
+                                    <li>
+                                        <Card.Meta
+                                            title={photo.title}
+                                            description={photo.url}
+                                        />
+                                    </li>
+                                )}
+                            />
+                        </Card>
                     </List.Item>
                 )}
             />
@@ -93,18 +93,14 @@ const Albums = () => {
                 <Input
                     style={{ width: 200, marginRight: 10 }}
                     value={newAlbum.title}
-                    onChange={(e) =>
-                        setNewAlbum({ ...newAlbum, title: e.target.value })
-                    }
+                    onChange={(e) => setNewAlbum({ ...newAlbum, title: e.target.value })}
                     placeholder="New album title"
                 />
-                <Button type="primary" onClick={handleCreate}>
-                    Add Album
-                </Button>
+                <Button type="primary" onClick={handleCreate}>Add Album</Button>
             </div>
             <Modal
                 title="Edit Album"
-                open={isModalVisible}
+                visible={isModalVisible}
                 onOk={handleUpdate}
                 onCancel={handleCancel}
             >
@@ -112,38 +108,28 @@ const Albums = () => {
                     <Form.Item label="Album Title">
                         <Input
                             value={editAlbum?.title}
-                            onChange={(e) =>
-                                setEditAlbum({
-                                    ...editAlbum,
-                                    title: e.target.value,
-                                })
-                            }
+                            onChange={(e) => setEditAlbum({ ...editAlbum, title: e.target.value })}
                             placeholder="Edit album title"
                         />
                     </Form.Item>
                 </Form>
             </Modal>
             <Modal
-                title={selectedAlbum?.title}
-                open={photoModalVisible}
+                title="Photos"
+                visible={photoModalVisible}
                 onCancel={handlePhotoModalCancel}
                 footer={null}
             >
                 <List
-                    grid={{ gutter: 16, column: 3 }}
-                    dataSource={albumPhotos(selectedAlbum?.id)}
-                    renderItem={(photo) => (
+                    className="photo-list"
+                    itemLayout="horizontal"
+                    dataSource={selectedAlbum ? albumPhotos(selectedAlbum.id) : []}
+                    renderItem={photo => (
                         <List.Item>
-                            <Card
-                                cover={
-                                    <img
-                                        alt={photo.title}
-                                        src={photo.thumbnailUrl}
-                                    />
-                                }
-                            >
-                                <Card.Meta title={photo.title} />
-                            </Card>
+                            <Card.Meta
+                                title={photo.title}
+                                description={photo.url}
+                            />
                         </List.Item>
                     )}
                 />
