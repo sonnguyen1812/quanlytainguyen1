@@ -26,6 +26,11 @@ const Todos = () => {
         deleteItem('todos', id);
     };
 
+    const handleToggleComplete = (todo) => {
+        const updatedTodo = { ...todo, completed: !todo.completed };
+        updateItem('todos', updatedTodo);
+    };
+
     const showModal = (todo) => {
         setEditTodo(todo);
         setIsModalVisible(true);
@@ -49,7 +54,13 @@ const Todos = () => {
                             <Button type="danger" onClick={() => handleDelete(todo.id)}>Delete</Button>
                         ]}
                     >
-                        <Checkbox checked={todo.completed}>{todo.title}</Checkbox>
+                        <Checkbox
+                            checked={todo.completed}
+                            onChange={() => handleToggleComplete(todo)}
+                            style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
+                        >
+                            {todo.title}
+                        </Checkbox>
                     </List.Item>
                 )}
             />
@@ -60,12 +71,6 @@ const Todos = () => {
                     onChange={(e) => setNewTodo({ ...newTodo, title: e.target.value })}
                     placeholder="New todo title"
                 />
-                <Checkbox
-                    checked={newTodo.completed}
-                    onChange={(e) => setNewTodo({ ...newTodo, completed: e.target.checked })}
-                >
-                    Completed
-                </Checkbox>
                 <Button type="primary" onClick={handleCreate}>Add Todo</Button>
             </div>
             <Modal
@@ -81,14 +86,6 @@ const Todos = () => {
                             onChange={(e) => setEditTodo({ ...editTodo, title: e.target.value })}
                             placeholder="Edit todo title"
                         />
-                    </Form.Item>
-                    <Form.Item>
-                        <Checkbox
-                            checked={editTodo?.completed}
-                            onChange={(e) => setEditTodo({ ...editTodo, completed: e.target.checked })}
-                        >
-                            Completed
-                        </Checkbox>
                     </Form.Item>
                 </Form>
             </Modal>
