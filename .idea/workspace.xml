@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="13322142-d27a-43da-a8c5-cdc6ed6f1a66" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/utils/ImageResizer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Albums/Albums.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Albums/Albums.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +24,7 @@
         <option value="com.intellij.reactbuddy.index" />
         <option value="com.intellij.reactbuddy.useInitial" />
         <option value="com.intellij.reactbuddy.README" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -58,7 +63,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "npm.start.executor": "Run",
-    "settings.editor.selected.configurable": "http.proxy",
+    "settings.editor.selected.configurable": "editor.preferences.completion",
     "ts.external.directory.path": "/snap/webstorm/387/plugins/javascript-plugin/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   }
@@ -78,6 +83,11 @@
         <entry key="com.intellij.reactbuddy.storybook" value="false" />
       </map>
     </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/utils" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
@@ -122,7 +132,9 @@
       <workItem from="1722999594632" duration="1711000" />
       <workItem from="1723001896717" duration="42000" />
       <workItem from="1723002027302" duration="833000" />
-      <workItem from="1723002868981" duration="15544000" />
+      <workItem from="1723002868981" duration="16245000" />
+      <workItem from="1723080501279" duration="2318000" />
+      <workItem from="1723083252941" duration="12708000" />
     </task>
     <servers />
   </component>
