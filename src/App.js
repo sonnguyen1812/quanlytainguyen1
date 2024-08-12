@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, Link, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Link, useLocation } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import Posts from "./components/Posts/Posts";
 import Albums from "./components/Albums/Albums";
@@ -19,9 +19,6 @@ const App = () => {
     const location = useLocation();
     const currentPath = location.pathname;
 
-    // Determine if the current path should be highlighted
-    const selectedKeys = currentPath === "/" || currentPath.startsWith("/posts") ? ["/posts"] : [currentPath];
-
     return (
         <Layout className="layout">
             <Header>
@@ -29,14 +26,14 @@ const App = () => {
                 <Menu
                     theme="dark"
                     mode="horizontal"
-                    selectedKeys={selectedKeys}
+                    selectedKeys={[currentPath]}
                     items={menuItems}
                 />
             </Header>
             <Content style={{ padding: "0 50px" }}>
                 <div className="site-layout-content">
                     <Routes>
-                        <Route path="/" element={<Navigate to="/posts" />} />
+                        <Route path="/" element={<Posts />} />
                         <Route path="/posts" element={<Posts />} />
                         <Route path="/albums" element={<Albums />} />
                         <Route path="/todos" element={<Todos />} />
@@ -46,7 +43,7 @@ const App = () => {
             </Content>
             <Footer style={{ textAlign: "center" }}>
                 Resource Manager ©2024 Created by SonNH
-            </Footer>
+            </Footer>hello
         </Layout>
     );
 };
